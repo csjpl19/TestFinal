@@ -23,7 +23,7 @@ public class CallbackServletTest extends HttpServlet {
 
     // --- VOS INFORMATIONS ---
     private static final String CLIENT_ID = "";
-    private static final String CLIENT_SECRET = "JucuikGdv2-uwLx8KoTlDeSY2oT1ScsW54AWcb5sOmND-K9kHR1MGr_Jdb-Li36u";
+    private static final String CLIENT_SECRET = "";
     private static final String API_BASE_URL = "https://sandbox.moncashbutton.digicelgroup.com/Api";
     
     private static final String DB_URL = "jdbc:mysql://localhost:3306/TestReservation";
