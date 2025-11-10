@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Réservation d'Hôtel</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="email"], input[type="date"] { width: 100%; padding: 8px; box-sizing: border-box; }
+        .button-container { margin-top: 20px; }
+        button { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; }
+        #btn-save { background-color: #28a745; color: white; }
+        #btn-pay { background-color: #007bff; color: white; }
+        #payment-form { display: none; }
+        #notification { padding: 10px; margin-top: 15px; border-radius: 5px; text-align: center; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Nouvelle Réservation</h2>
+    <div id="notification"></div>
+
+    <form id="reservation-form" action="reservationServlet" method="post">
+        <h4>Informations Personnelles</h4>
+        <div class="form-group">
+            <label for="fullname">Nom complet :</label>
+            <input type="text" id="fullname" name="fullname" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email :</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="sexe">Sexe :</label>
+            <select id="sexe" name="sexe" required>
+                <option value="M">Masculin</option>
+                <option value="F">Féminin</option>
+            </select>
+        </div>
+
+        <h4>Détails de la Réservation</h4>
+        <div class="form-group">
+            <label for="checkin">Date d'arrivée (Check-in) :</label>
+            <input type="date" id="checkin" name="checkin" required>
+        </div>
+        <div class="form-group">
+            <label for="checkout">Date de départ (Check-out) :</label>
+            <input type="date" id="checkout" name="checkout" required>
+        </div>
+        
+        <div class="button-container">
+            <button type="submit" id="btn-save">Enregistrer la Réservation</button>
+        </div>
+    </form>
+
+    <form id="payment-form" action="createPaymentTest" method="post">
+        <h4>Paiement de la Réservation</h4>
+        <p>Montant à payer : <strong id="amount-display">0 HTG</strong></p>
+        <input type="hidden" id="amount" name="amount" value="">
+        <input type="hidden" id="orderId" name="orderId" value="">
+        <button type="submit" id="btn-pay">Payer maintenant</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkinDate = document.getElementById('checkin');
+        const checkoutDate = document.getElementById('checkout');
+        const paymentForm = document.getElementById('payment-form');
+        const reservationForm = document.getElementById('reservation-form');
+        const notification = document.getElementById('notification');
+
+        // Gère les paramètres dans l'URL pour afficher les notifications et le formulaire de paiement
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('status');
+        const orderId = urlParams.get('orderId');
+        const amount = urlParams.get('amount');
+        const message = urlParams.get('message');
+
+        if (status) {
+            notification.textContent = decodeURIComponent(message);
+            notification.classList.add(status === 'success' ? 'success' : 'error');
+
+            if (status === 'success' && orderId && amount) {
+                // Cache le formulaire de réservation et affiche celui du paiement
+                reservationForm.style.display = 'none';
+                paymentForm.style.display = 'block';
+                
+                // Remplit les informations de paiement
+                document.getElementById('amount-display').textContent = amount + ' HTG';
+                document.getElementById('amount').value = amount;
+                document.getElementById('orderId').value = orderId;
+            }
+        }
+
+        // Calcule le montant dynamiquement lorsque les dates changent
+        function calculateAmount() {
+            const date1 = new Date(checkinDate.value);
+            const date2 = new Date(checkoutDate.value);
+
+            if (checkinDate.value && checkoutDate.value && date2 > date1) {
+                const timeDiff = date2.getTime() - date1.getTime();
+                const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                const totalAmount = diffDays * 100; // 100 HTG par jour
+                return totalAmount;
+            }
+            return 0;
+        }
+        
+        // Met à jour le montant lorsque les dates changent
+        checkinDate.addEventListener('change', calculateAmount);
+        checkoutDate.addEventListener('change', calculateAmount);
+    });
+</script>
+
+</body>
+</html>
