@@ -22,7 +22,7 @@ public class ReservationServlet extends HttpServlet {
     // --- CONFIGUREZ VOTRE CONNEXION À LA BASE DE DONNÉES ---
     private static final String DB_URL = "jdbc:mysql://localhost:3306/TestReservation";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "Monmdpsql";
+    private static final String DB_PASSWORD = "";
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
